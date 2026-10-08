@@ -1,0 +1,1958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chronicle - Personal Journal</title>
+  <meta name="description" content="A quiet, retro black-and-white personal journal and life ledger.">
+  <meta property="og:title" content="Chronicle - Personal Journal">
+  <meta property="og:description" content="A quiet, retro black-and-white personal journal and life ledger.">
+  <meta property="og:type" content="website">
+
+  <!-- Early Theme Detection to prevent flicker -->
+  <script>
+    (function () {
+      try {
+        const saved = localStorage.getItem('retro_journal_theme');
+        const theme = saved || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) {}
+    })();
+  </script>
+
+  <!-- ================================================================= -->
+  <!-- RETRO BLACK & WHITE STYLESHEET                                    -->
+  <!-- Strictly monochrome (black, white, greys), serif & monospace typography -->
+  <!-- ================================================================= -->
+  <style>
+    /* --- CSS RESET & BASE TYPOGRAPHY --- */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --black: #000000;
+      --charcoal: #222222;
+      --grey-dark: #555555;
+      --grey-mid: #888888;
+      --grey-light: #cccccc;
+      --grey-paper: #f7f7f7;
+      --white: #ffffff;
+      --line-rule: #e0e0e0;
+      --font-serif: Georgia, "Times New Roman", Times, serif;
+      --font-mono: "Courier New", Courier, monospace;
+      color-scheme: light;
+    }
+
+    /* Inverted Retro Dark Mode */
+    [data-theme="dark"] {
+      --black: #f7f7f7;
+      --charcoal: #e5e5e5;
+      --grey-dark: #aaaaaa;
+      --grey-mid: #777777;
+      --grey-light: #383838;
+      --grey-paper: #121212;
+      --white: #0a0a0a;
+      --line-rule: #262626;
+      color-scheme: dark;
+    }
+
+    body {
+      background-color: var(--white);
+      color: var(--black);
+      font-family: var(--font-serif);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      padding: 0;
+      margin: 0;
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+
+    [data-theme="dark"] body {
+      letter-spacing: 0.01em;
+    }
+
+    /* --- LAYOUT WRAPPER --- */
+    .container {
+      width: 100%;
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 16px 20px 60px 20px;
+    }
+
+    /* --- RETRO MASTHEAD / NEWSPAPER HEADER --- */
+    .masthead {
+      border-bottom: 3px double var(--black);
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .top-meta-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--black);
+      padding: 4px 2px;
+      margin-bottom: 12px;
+    }
+
+    .theme-toggle-btn {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: var(--white);
+      color: var(--black);
+      border: 1px solid var(--black);
+      padding: 2px 8px;
+      cursor: pointer;
+      line-height: 1.4;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: none;
+    }
+
+    .theme-toggle-btn:hover {
+      background: var(--black);
+      color: var(--white);
+    }
+
+    .theme-invert-tag {
+      font-weight: bold;
+      text-decoration: underline;
+    }
+
+    .masthead-title {
+      font-family: var(--font-serif);
+      font-size: 38px;
+      font-weight: normal;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      line-height: 1.1;
+      margin: 8px 0 4px 0;
+    }
+
+    .masthead-subtitle {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 15px;
+      color: var(--grey-dark);
+      margin-bottom: 10px;
+    }
+
+    .masthead-rule {
+      border: 0;
+      border-top: 1px solid var(--black);
+      border-bottom: 1px solid var(--black);
+      height: 3px;
+      margin: 8px 0;
+    }
+
+    /* --- UTILITY BAR (SEARCH & STATS) --- */
+    .utility-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px dashed var(--grey-light);
+      margin-bottom: 20px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      flex-grow: 1;
+      max-width: 420px;
+      border: 1px solid var(--black);
+      background: var(--white);
+    }
+
+    .search-box span {
+      padding: 6px 8px;
+      font-size: 12px;
+      border-right: 1px solid var(--black);
+      background: var(--grey-paper);
+    }
+
+    .search-box input {
+      border: none;
+      outline: none;
+      padding: 6px 10px;
+      width: 100%;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      background: transparent;
+    }
+
+    .util-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    /* --- BUTTONS & RETRO HOVER INVERT --- */
+    .retro-btn {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 7px 14px;
+      border: 1px solid var(--black);
+      background: var(--white);
+      color: var(--black);
+      cursor: pointer;
+      text-decoration: none;
+      transition: none;
+      min-height: 36px;
+      line-height: 20px;
+    }
+
+    .retro-btn:hover {
+      background: var(--black);
+      color: var(--white);
+    }
+
+    .retro-btn.btn-active {
+      background: var(--black);
+      color: var(--white);
+    }
+
+    .retro-btn-sm {
+      padding: 3px 8px;
+      font-size: 11px;
+      min-height: 26px;
+      line-height: 18px;
+    }
+
+    /* --- SECTION NAVIGATION TABS --- */
+    .journal-nav {
+      margin-bottom: 24px;
+    }
+
+    .nav-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+      color: var(--grey-dark);
+    }
+
+    .tabs-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      border-bottom: 2px solid var(--black);
+      padding-bottom: 4px;
+    }
+
+    .tab-btn {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      padding: 8px 14px;
+      background: var(--white);
+      color: var(--black);
+      border: 1px solid var(--black);
+      cursor: pointer;
+      white-space: nowrap;
+      text-align: left;
+    }
+
+    .tab-btn:hover {
+      background: var(--black);
+      color: var(--white);
+    }
+
+    .tab-btn.active {
+      background: var(--black);
+      color: var(--white);
+      font-weight: bold;
+    }
+
+    .tab-badge {
+      display: inline-block;
+      margin-left: 6px;
+      font-size: 11px;
+      padding: 0 4px;
+      border: 1px solid currentColor;
+    }
+
+    /* --- SECTION HEADER --- */
+    .section-intro-box {
+      border: 1px solid var(--black);
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      background: var(--grey-paper);
+    }
+
+    .section-headline {
+      font-size: 24px;
+      font-weight: normal;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .section-tagline {
+      font-family: var(--font-serif);
+      font-style: italic;
+      color: var(--grey-dark);
+      font-size: 14px;
+    }
+
+    /* --- WRITING DESK (ENTRY FORM) --- */
+    .writing-desk {
+      border: 2px solid var(--black);
+      padding: 20px;
+      margin-bottom: 30px;
+      background: var(--white);
+    }
+
+    .writing-desk-header {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border-bottom: 1px solid var(--black);
+      padding-bottom: 8px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .edit-banner {
+      display: none;
+      background: var(--black);
+      color: var(--white);
+      padding: 6px 12px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      margin-bottom: 14px;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .edit-banner.visible {
+      display: flex;
+    }
+
+    .form-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+
+    .form-group {
+      flex: 1;
+      min-width: 200px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-label {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .form-label .required {
+      color: var(--black);
+      font-weight: bold;
+    }
+
+    .retro-input,
+    .retro-select,
+    .retro-textarea {
+      width: 100%;
+      border: 1px solid var(--black);
+      background: var(--white);
+      color: var(--black);
+      padding: 8px 10px;
+      font-family: var(--font-serif);
+      font-size: 15px;
+      outline: none;
+    }
+
+    .retro-input:focus,
+    .retro-select:focus,
+    .retro-textarea:focus {
+      outline: 2px solid var(--black);
+    }
+
+    .retro-input.mono,
+    .retro-select.mono {
+      font-family: var(--font-mono);
+      font-size: 13px;
+    }
+
+    .retro-textarea {
+      min-height: 140px;
+      line-height: 1.6;
+      resize: vertical;
+    }
+
+    /* Lined paper effect on daily write textarea */
+    .retro-textarea.lined-paper {
+      background-attachment: local;
+      background-image: linear-gradient(to bottom, transparent 27px, var(--line-rule) 28px);
+      background-size: 100% 28px;
+      line-height: 28px;
+      padding-top: 4px;
+    }
+
+    .form-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px dotted var(--black);
+    }
+
+    .char-count {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--grey-dark);
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    /* --- ENTRIES ARCHIVE / LIST --- */
+    .archive-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 10px;
+      border-bottom: 2px solid var(--black);
+      padding-bottom: 6px;
+      margin-bottom: 18px;
+    }
+
+    .archive-title {
+      font-size: 20px;
+      font-weight: normal;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .archive-meta {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--grey-dark);
+    }
+
+    .entries-container {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    /* RETRO ENTRY CARD */
+    .entry-card {
+      border: 1px solid var(--black);
+      padding: 16px 18px;
+      background: var(--white);
+      position: relative;
+    }
+
+    .entry-card:hover {
+      box-shadow: 2px 2px 0 var(--black);
+    }
+
+    .entry-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 8px;
+      border-bottom: 1px dotted var(--grey-light);
+      padding-bottom: 8px;
+      margin-bottom: 10px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+
+    .entry-date-badge {
+      font-weight: bold;
+    }
+
+    .entry-section-tag {
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--grey-dark);
+      margin-left: 6px;
+    }
+
+    .entry-status-badge {
+      display: inline-block;
+      border: 1px solid var(--black);
+      padding: 1px 6px;
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+
+    .entry-status-badge.invert {
+      background: var(--black);
+      color: var(--white);
+    }
+
+    .entry-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .entry-body {
+      font-size: 15px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .entry-extra-data {
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px dashed var(--grey-light);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--charcoal);
+    }
+
+    .entry-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      padding-top: 8px;
+      border-top: 1px dotted var(--grey-light);
+      justify-content: flex-end;
+    }
+
+    /* EMPTY STATE */
+    .empty-state {
+      border: 1px dashed var(--black);
+      padding: 40px 20px;
+      text-align: center;
+      background: var(--grey-paper);
+      font-family: var(--font-mono);
+      font-size: 14px;
+      color: var(--charcoal);
+    }
+
+    .empty-state p {
+      margin-bottom: 12px;
+    }
+
+    /* --- SCHEDULE SPECIFIC STYLES --- */
+    .schedule-item-row {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+    }
+
+    .schedule-check {
+      cursor: pointer;
+      accent-color: var(--black);
+      width: 16px;
+      height: 16px;
+      margin-top: 2px;
+    }
+
+    .schedule-completed {
+      text-decoration: line-through;
+      color: var(--grey-mid);
+    }
+
+    /* --- NOTIFICATION TOAST --- */
+    .toast-msg {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--black);
+      color: var(--white);
+      border: 1px solid var(--white);
+      padding: 10px 18px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      z-index: 1000;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.2s, transform 0.2s;
+      pointer-events: none;
+    }
+
+    .toast-msg.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* --- MODAL DIALOGS --- */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 999;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-card {
+      background: var(--white);
+      border: 2px solid var(--black);
+      width: 100%;
+      max-width: 580px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 24px;
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: normal;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--black);
+      padding-bottom: 8px;
+      margin-bottom: 14px;
+    }
+
+    /* --- RETRO FOOTER --- */
+    .footer {
+      margin-top: 60px;
+      border-top: 3px double var(--black);
+      padding-top: 16px;
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--grey-dark);
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a,
+    .footer-links button {
+      color: var(--black);
+      text-decoration: underline;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: inherit;
+    }
+
+    .footer-links a:hover,
+    .footer-links button:hover {
+      background: var(--black);
+      color: var(--white);
+      text-decoration: none;
+    }
+
+    /* --- RESPONSIVE ADJUSTMENTS --- */
+    @media (max-width: 768px) {
+      .container {
+        padding: 12px 14px 40px 14px;
+      }
+      .masthead-title {
+        font-size: 28px;
+      }
+      .top-meta-bar {
+        font-size: 10px;
+        flex-direction: column;
+        gap: 4px;
+        align-items: flex-start;
+      }
+      .tabs-wrapper {
+        overflow-x: auto;
+        white-space: nowrap;
+        padding-bottom: 6px;
+        -webkit-overflow-scrolling: touch;
+      }
+      .tab-btn {
+        font-size: 12px;
+        padding: 7px 10px;
+      }
+      .writing-desk {
+        padding: 14px;
+      }
+      .form-row {
+        flex-direction: column;
+        gap: 10px;
+      }
+      .search-box {
+        max-width: 100%;
+      }
+    }
+
+    /* --- PRINT STYLESHEET (CLEAN BOOKLET) --- */
+    @media print {
+      body {
+        font-size: 12pt;
+        background: white;
+        color: black;
+      }
+      .journal-nav,
+      .writing-desk,
+      .utility-bar,
+      .entry-actions,
+      .footer-links,
+      .toast-msg {
+        display: none !important;
+      }
+      .entry-card {
+        page-break-inside: avoid;
+        border-bottom: 1px solid black;
+        box-shadow: none !important;
+        margin-bottom: 16pt;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- ================================================================= -->
+    <!-- 1. MASTHEAD & RETRO NEWSPAPER HEADER                               -->
+    <!-- Edit site title, edition name, or quote here                       -->
+    <!-- ================================================================= -->
+    <header class="masthead">
+      <div class="top-meta-bar">
+        <span id="masthead-date">DAILY CHRONICLE · LOCAL STORAGE EDITION</span>
+        <span id="masthead-stats">TOTAL ENTRIES: 0 · WORDS: 0</span>
+        <button type="button" id="theme-toggle-btn" class="theme-toggle-btn" title="Toggle Light / Dark Inverted Mode" aria-label="Toggle Dark Mode">
+          <span>THEME: <strong id="theme-mode-text">LIGHT</strong></span>
+          <span class="theme-invert-tag">[INVERT]</span>
+        </button>
+      </div>
+
+      <h1 class="masthead-title">The Personal Chronicle</h1>
+      <p class="masthead-subtitle">A Quiet Monochromatic Ledger of Daily Life, Habit, Reflection & Intent</p>
+      <div class="masthead-rule"></div>
+    </header>
+
+    <!-- ================================================================= -->
+    <!-- 2. UTILITY SEARCH & QUICK ACTIONS BAR                              -->
+    <!-- ================================================================= -->
+    <div class="utility-bar">
+      <div class="search-box">
+        <span>SEARCH</span>
+        <input type="text" id="search-input" placeholder="Find keywords, memories, or habits..." autocomplete="off">
+        <button id="clear-search-btn" class="retro-btn retro-btn-sm" style="border:none; border-left:1px solid var(--black); display:none;">CLEAR</button>
+      </div>
+
+      <div class="util-actions">
+        <button id="btn-export-txt" class="retro-btn" title="Download formatted text ledger">Export .txt</button>
+        <button id="btn-backup-json" class="retro-btn" title="Backup all records to JSON">Backup .json</button>
+        <button id="btn-import-json" class="retro-btn" title="Restore or merge JSON data">Import</button>
+        <input type="file" id="import-file-input" accept=".json" style="display:none;">
+      </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- 3. NAVIGATION: 6 DEDICATED JOURNAL SECTIONS + GENERAL DAY WRITE    -->
+    <!-- Edit section tab names and ordering here                           -->
+    <!-- ================================================================= -->
+    <nav class="journal-nav" aria-label="Journal Sections">
+      <div class="nav-label">Select Journal Ledger:</div>
+      <div class="tabs-wrapper" id="nav-tabs">
+        <!-- Tab 0: Home / General Overview & Free Writing -->
+        <button class="tab-btn active" data-section="all">
+          0. All & Daily Write <span class="tab-badge" id="badge-all">0</span>
+        </button>
+
+        <!-- Tab 1: Happy Things -->
+        <button class="tab-btn" data-section="happy">
+          1. Happy Things <span class="tab-badge" id="badge-happy">0</span>
+        </button>
+
+        <!-- Tab 2: Promote Things (Growth, achievements) -->
+        <button class="tab-btn" data-section="promote">
+          2. Promote Things <span class="tab-badge" id="badge-promote">0</span>
+        </button>
+
+        <!-- Tab 3: Helping Things (Gratitude & mutual aid) -->
+        <button class="tab-btn" data-section="helping">
+          3. Helping Things <span class="tab-badge" id="badge-helping">0</span>
+        </button>
+
+        <!-- Tab 4: Discipline Things (Kỷ luật, habits, rules) -->
+        <button class="tab-btn" data-section="discipline">
+          4. Discipline (Kỷ luật) <span class="tab-badge" id="badge-discipline">0</span>
+        </button>
+
+        <!-- Tab 5: Things to Reduce (Bad habits, vices) -->
+        <button class="tab-btn" data-section="reduce">
+          5. Things to Reduce <span class="tab-badge" id="badge-reduce">0</span>
+        </button>
+
+        <!-- Tab 6: Schedule (Daily & weekly agenda) -->
+        <button class="tab-btn" data-section="schedule">
+          6. Schedule <span class="tab-badge" id="badge-schedule">0</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- ================================================================= -->
+    <!-- 4. SECTION BANNER / INTRODUCTION                                  -->
+    <!-- Dynamically describes the currently active section                 -->
+    <!-- ================================================================= -->
+    <section class="section-intro-box" id="section-intro">
+      <div class="section-headline">
+        <span id="section-title">0. Daily Write & Ledger Overview</span>
+        <span class="entry-status-badge" id="section-active-badge">ALL RECORDS</span>
+      </div>
+      <p class="section-tagline" id="section-desc">
+        A quiet sanctuary to write about your day, record impressions, and inspect the tapestry of your life.
+      </p>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- 5. WRITING DESK (FORM FOR NEW & EDITED ENTRIES)                   -->
+    <!-- Adapts automatically to the selected section                       -->
+    <!-- ================================================================= -->
+    <section class="writing-desk" id="writing-desk">
+      <!-- Edit Mode Notification -->
+      <div class="edit-banner" id="edit-mode-banner">
+        <span id="edit-banner-text">EDITING EXISTING ENTRY</span>
+        <button type="button" class="retro-btn retro-btn-sm" id="btn-cancel-edit" style="color:var(--black); background:var(--white);">Cancel Edit</button>
+      </div>
+
+      <div class="writing-desk-header">
+        <span id="desk-form-title">NEW ENTRY · WRITE ABOUT MY DAY</span>
+        <span id="desk-form-hint">PRESS SAVE WHEN FINISHED</span>
+      </div>
+
+      <form id="entry-form">
+        <!-- Hidden input storing entry ID during edit -->
+        <input type="hidden" id="entry-id" value="">
+
+        <!-- Top Row: Date & Time + Section Category -->
+        <div class="form-row">
+          <div class="form-group" style="max-width: 260px;">
+            <label class="form-label" for="entry-date">Date & Time <span class="required">*</span></label>
+            <input type="datetime-local" id="entry-date" class="retro-input mono" required>
+          </div>
+
+          <div class="form-group" style="max-width: 260px;">
+            <label class="form-label" for="entry-section-select">Ledger Section <span class="required">*</span></label>
+            <select id="entry-section-select" class="retro-select mono" required>
+              <option value="daily">0. Daily Journal (Free Write)</option>
+              <option value="happy">1. Happy Things</option>
+              <option value="promote">2. Promote Things</option>
+              <option value="helping">3. Helping Things</option>
+              <option value="discipline">4. Discipline Things (Kỷ luật)</option>
+              <option value="reduce">5. Things to Reduce</option>
+              <option value="schedule">6. Schedule Planner</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="entry-title" id="label-title">Title / Headline</label>
+            <input type="text" id="entry-title" class="retro-input" placeholder="A brief heading or summary...">
+          </div>
+        </div>
+
+        <!-- Dynamic Section-Specific Fields -->
+
+        <!-- A. Discipline (Kỷ luật) Fields -->
+        <div class="form-row" id="group-discipline-fields" style="display:none;">
+          <div class="form-group" style="max-width: 320px;">
+            <label class="form-label" for="discipline-status">Adherence Verdict <span class="required">*</span></label>
+            <select id="discipline-status" class="retro-select mono">
+              <option value="kept">Kept [✓] - Followed strictly</option>
+              <option value="broken">Broken [x] - Slipped / Fell short</option>
+              <option value="in_progress">In Progress [~] - Ongoing commitment</option>
+              <option value="note">Pledge / Rule - Setting new standard</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="discipline-rule">Rule or Habit Committed To</label>
+            <input type="text" id="discipline-rule" class="retro-input" placeholder="e.g. Woke up at 05:30, 45m workout, no junk food...">
+          </div>
+        </div>
+
+        <!-- B. Things to Reduce Fields -->
+        <div class="form-row" id="group-reduce-fields" style="display:none;">
+          <div class="form-group" style="max-width: 320px;">
+            <label class="form-label" for="reduce-verdict">Today's Result <span class="required">*</span></label>
+            <select id="reduce-verdict" class="retro-select mono">
+              <option value="avoided">Avoided [✓] - Successfully resisted</option>
+              <option value="improved">Reduced [-] - Less than usual</option>
+              <option value="slipped">Slipped [!] - Indulged or fell back</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="reduce-habit">Habit / Behavior Being Cut</label>
+            <input type="text" id="reduce-habit" class="retro-input" placeholder="e.g. Doom-scrolling, late-night snacking, excessive coffee...">
+          </div>
+        </div>
+
+        <!-- C. Schedule Specific Fields -->
+        <div class="form-row" id="group-schedule-fields" style="display:none;">
+          <div class="form-group" style="max-width: 220px;">
+            <label class="form-label" for="schedule-time">Scheduled Time</label>
+            <input type="text" id="schedule-time" class="retro-input mono" placeholder="e.g. 08:30 or 14:00 - 15:30">
+          </div>
+          <div class="form-group" style="max-width: 220px;">
+            <label class="form-label" for="schedule-status">Initial Status</label>
+            <select id="schedule-status" class="retro-select mono">
+              <option value="pending">To Do [ ]</option>
+              <option value="completed">Completed [✓]</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Main Content Text Area -->
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label class="form-label" for="entry-content" id="label-content">
+            Journal Entry / Notes <span class="required">*</span>
+          </label>
+          <textarea id="entry-content" class="retro-textarea lined-paper" placeholder="Write freely here. Describe events, thoughts, lessons, or reflections..." required></textarea>
+        </div>
+
+        <!-- Form Footer: Word/Char Counter & Action Buttons -->
+        <div class="form-footer">
+          <div class="char-count" id="live-word-count">0 words · 0 characters</div>
+          <div class="form-actions">
+            <button type="button" class="retro-btn" id="btn-reset-form">Clear</button>
+            <button type="submit" class="retro-btn btn-active" id="btn-save-entry">Save Entry</button>
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- 6. ENTRIES ARCHIVE / LIST VIEW                                    -->
+    <!-- Displays saved entries newest first with edit & delete             -->
+    <!-- ================================================================= -->
+    <section class="entries-archive" id="entries-archive">
+      <div class="archive-header">
+        <h2 class="archive-title" id="archive-section-heading">Past Entries Ledger</h2>
+        <div class="archive-meta">
+          <span id="entries-count-label">Showing 0 entries</span> ·
+          <span id="archive-sort-note">Chronological (Newest First)</span>
+        </div>
+      </div>
+
+      <!-- Container where JavaScript renders entry cards -->
+      <div class="entries-container" id="entries-list">
+        <!-- Rendered via renderEntries() -->
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- 7. FOOTER                                                         -->
+    <!-- ================================================================= -->
+    <footer class="footer">
+      <div class="footer-links">
+        <button id="btn-sample-data">Load Sample Ledger</button>
+        <span>·</span>
+        <button id="btn-clear-all" style="color:var(--grey-dark);">Clear All Data</button>
+        <span>·</span>
+        <button onclick="window.print()">Print Ledger</button>
+      </div>
+      <p>The Personal Chronicle · Plain HTML, CSS & Vanilla JavaScript · Data strictly stored in your browser.</p>
+    </footer>
+
+  </div>
+
+  <!-- Notification Toast -->
+  <div class="toast-msg" id="toast-message">ENTRY SAVED</div>
+
+  <!-- ================================================================= -->
+  <!-- JAVASCRIPT: LOGIC & LOCALSTORAGE PERSISTENCE                      -->
+  <!-- Short comments throughout for easy customization                  -->
+  <!-- ================================================================= -->
+  <script>
+    (function () {
+      'use strict';
+
+      // ===============================================================
+      // 1. CONFIGURATION & SECTION METADATA
+      // You can customize section descriptions, names and prompts below
+      // ===============================================================
+      const STORAGE_KEY = 'retro_journal_entries_v1';
+
+      const SECTIONS = {
+        all: {
+          title: '0. Daily Write & Ledger Overview',
+          badge: 'ALL SECTIONS',
+          desc: 'A quiet sanctuary to write about your day, record impressions, and inspect all parts of your personal ledger.',
+          placeholderTitle: 'Daily headline or mood...',
+          placeholderContent: 'Write freely about your day, your triumphs, your quiet thoughts...',
+          defaultFormSection: 'daily'
+        },
+        happy: {
+          title: '1. Happy Things (Khoảnh khắc vui vẻ)',
+          badge: 'JOY & GRATITUDE',
+          desc: 'Moments and things that made me happy: pleasant encounters, warm meals, small smiles, and peaceful stillness.',
+          placeholderTitle: 'What brought a smile today?',
+          placeholderContent: 'Describe the happy moment, who was there, or why it warmed your heart...',
+          defaultFormSection: 'happy'
+        },
+        promote: {
+          title: '2. Promote Things (Phát triển bản thân)',
+          badge: 'GROWTH & ADVANCE',
+          desc: 'Things that lift me up or help me grow: achievements, skills acquired, projects moving forward, ideas to push.',
+          placeholderTitle: 'Milestone, breakthrough or progress made...',
+          placeholderContent: 'What did you advance today? What is the next step to keep momentum going?...',
+          defaultFormSection: 'promote'
+        },
+        helping: {
+          title: '3. Helping Things (Giúp đỡ & Biết ơn)',
+          badge: 'MUTUAL AID',
+          desc: 'Things I did to help others, or things that helped me: generosity offered, warmth received, gratitude for allies.',
+          placeholderTitle: 'Kind deed or assistance received...',
+          placeholderContent: 'Who did you lend a hand to? Or who gave you support when you needed it?...',
+          defaultFormSection: 'helping'
+        },
+        discipline: {
+          title: '4. Discipline Things (Kỷ luật & Thói quen)',
+          badge: 'RULES & HABITS',
+          desc: 'Rules for myself, commitments, morning routines, standards, and whether I kept them with honesty.',
+          placeholderTitle: 'Daily pledge or habit standard...',
+          placeholderContent: 'Reflect honestly: did you maintain your discipline? Where was the friction or victory?...',
+          defaultFormSection: 'discipline'
+        },
+        reduce: {
+          title: '5. Things to Reduce (Cắt giảm thói quen xấu)',
+          badge: 'HABIT REDUCTION',
+          desc: 'Bad habits, digital distractions, or vices I want to cut down, with a clear place to track progress.',
+          placeholderTitle: 'Habit to curb today...',
+          placeholderContent: 'What was the trigger? Did you manage to resist or substitute with a healthier choice?...',
+          defaultFormSection: 'reduce'
+        },
+        schedule: {
+          title: '6. Daily Schedule (Lịch trình & Kế hoạch)',
+          badge: 'TIME & TASKS',
+          desc: 'A chronological daily and weekly planner where tasks can be listed with designated times and checked off.',
+          placeholderTitle: 'Task or appointment description...',
+          placeholderContent: 'Details, materials needed, location, or sub-tasks...',
+          defaultFormSection: 'schedule'
+        }
+      };
+
+      // ===============================================================
+      // 2. STATE MANAGEMENT
+      // ===============================================================
+      let currentSection = 'all';
+      let searchQuery = '';
+      let editingEntryId = null;
+
+      // DOM Elements
+      const navTabs = document.getElementById('nav-tabs');
+      const sectionTitle = document.getElementById('section-title');
+      const sectionDesc = document.getElementById('section-desc');
+      const sectionActiveBadge = document.getElementById('section-active-badge');
+      const entryForm = document.getElementById('entry-form');
+      const entryIdInput = document.getElementById('entry-id');
+      const entryDateInput = document.getElementById('entry-date');
+      const entrySectionSelect = document.getElementById('entry-section-select');
+      const entryTitleInput = document.getElementById('entry-title');
+      const entryContentInput = document.getElementById('entry-content');
+      const liveWordCount = document.getElementById('live-word-count');
+      const deskFormTitle = document.getElementById('desk-form-title');
+      const editModeBanner = document.getElementById('edit-mode-banner');
+      const btnCancelEdit = document.getElementById('btn-cancel-edit');
+      const btnResetForm = document.getElementById('btn-reset-form');
+      const btnSaveEntry = document.getElementById('btn-save-entry');
+      const entriesList = document.getElementById('entries-list');
+      const entriesCountLabel = document.getElementById('entries-count-label');
+      const searchInput = document.getElementById('search-input');
+      const clearSearchBtn = document.getElementById('clear-search-btn');
+      const mastheadStats = document.getElementById('masthead-stats');
+      const toastMessage = document.getElementById('toast-message');
+
+      // Specific field groups
+      const groupDiscipline = document.getElementById('group-discipline-fields');
+      const groupReduce = document.getElementById('group-reduce-fields');
+      const groupSchedule = document.getElementById('group-schedule-fields');
+      const disciplineStatus = document.getElementById('discipline-status');
+      const disciplineRule = document.getElementById('discipline-rule');
+      const reduceVerdict = document.getElementById('reduce-verdict');
+      const reduceHabit = document.getElementById('reduce-habit');
+      const scheduleTime = document.getElementById('schedule-time');
+      const scheduleStatus = document.getElementById('schedule-status');
+
+      // Utility buttons
+      const btnExportTxt = document.getElementById('btn-export-txt');
+      const btnBackupJson = document.getElementById('btn-backup-json');
+      const btnImportJson = document.getElementById('btn-import-json');
+      const importFileInput = document.getElementById('import-file-input');
+      const btnSampleData = document.getElementById('btn-sample-data');
+      const btnClearAll = document.getElementById('btn-clear-all');
+
+      // Theme Elements & Storage Key
+      const THEME_STORAGE_KEY = 'retro_journal_theme';
+      const themeToggleBtn = document.getElementById('theme-toggle-btn');
+      const themeModeText = document.getElementById('theme-mode-text');
+
+      function getPreferredTheme() {
+        try {
+          const saved = localStorage.getItem(THEME_STORAGE_KEY);
+          if (saved === 'dark' || saved === 'light') return saved;
+        } catch (e) {}
+        return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+      }
+
+      function applyTheme(theme, notify = false) {
+        document.documentElement.setAttribute('data-theme', theme);
+        if (themeModeText) {
+          themeModeText.textContent = theme.toUpperCase();
+        }
+        if (themeToggleBtn) {
+          themeToggleBtn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+          themeToggleBtn.title = theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Inverted Dark Mode';
+        }
+        if (notify) {
+          showToast(`THEME: ${theme.toUpperCase()} MODE [INVERTED]`);
+        }
+      }
+
+      function toggleTheme() {
+        const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next, true);
+        try {
+          localStorage.setItem(THEME_STORAGE_KEY, next);
+        } catch (e) {
+          console.error('Error saving theme preference:', e);
+        }
+      }
+
+      // ===============================================================
+      // 3. STORAGE HELPERS
+      // ===============================================================
+      function getEntries() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          return raw ? JSON.parse(raw) : [];
+        } catch (e) {
+          console.error('Error loading entries from localStorage:', e);
+          return [];
+        }
+      }
+
+      function saveEntries(entries) {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+          updateBadgesAndStats();
+        } catch (e) {
+          console.error('Error saving entries to localStorage:', e);
+          showToast('Storage error: Could not save');
+        }
+      }
+
+      // Helper to format ISO datetime-local value (YYYY-MM-DDTHH:MM)
+      function getCurrentDateTimeLocal() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        return `${year}-${month}-${day}T${hours}:${minutes}`;
+      }
+
+      // Format timestamp for display (e.g. "Thu, Oct 8, 2026 · 09:30 AM")
+      function formatDisplayDate(dateStr) {
+        if (!dateStr) return '';
+        const d = new Date(dateStr);
+        if (isNaN(d.getTime())) return dateStr;
+
+        const options = {
+          weekday: 'short',
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        };
+        return d.toLocaleDateString('en-US', options);
+      }
+
+      function showToast(msg) {
+        toastMessage.textContent = msg;
+        toastMessage.classList.add('show');
+        setTimeout(() => {
+          toastMessage.classList.remove('show');
+        }, 2200);
+      }
+
+      // ===============================================================
+      // 4. UI SYNCHRONIZATION & SECTION SWITCHING
+      // ===============================================================
+      function setSection(sectionKey) {
+        if (!SECTIONS[sectionKey]) sectionKey = 'all';
+        currentSection = sectionKey;
+
+        // Update active tab button
+        const tabs = navTabs.querySelectorAll('.tab-btn');
+        tabs.forEach(tab => {
+          if (tab.dataset.section === sectionKey) {
+            tab.classList.add('active');
+          } else {
+            tab.classList.remove('active');
+          }
+        });
+
+        // Update Section Intro Banner
+        const conf = SECTIONS[sectionKey];
+        sectionTitle.textContent = conf.title;
+        sectionDesc.textContent = conf.desc;
+        sectionActiveBadge.textContent = conf.badge;
+
+        // If not in edit mode, sync form's section dropdown to match current view
+        if (!editingEntryId) {
+          entrySectionSelect.value = conf.defaultFormSection;
+          updateFormFieldsVisibility(conf.defaultFormSection);
+        }
+
+        renderEntries();
+      }
+
+      function updateFormFieldsVisibility(selectedSection) {
+        // Show/hide section-specific fields
+        groupDiscipline.style.display = (selectedSection === 'discipline') ? 'flex' : 'none';
+        groupReduce.style.display = (selectedSection === 'reduce') ? 'flex' : 'none';
+        groupSchedule.style.display = (selectedSection === 'schedule') ? 'flex' : 'none';
+
+        // Update placeholders
+        const sectionConfig = SECTIONS[selectedSection] || SECTIONS.all;
+        entryTitleInput.placeholder = sectionConfig.placeholderTitle;
+        entryContentInput.placeholder = sectionConfig.placeholderContent;
+
+        if (editingEntryId) {
+          deskFormTitle.textContent = `EDIT ENTRY · ${selectedSection.toUpperCase()}`;
+        } else {
+          deskFormTitle.textContent = `NEW ENTRY · ${selectedSection.toUpperCase()}`;
+        }
+      }
+
+      function updateWordCount() {
+        const text = (entryContentInput.value || '').trim();
+        const words = text ? text.split(/\s+/).length : 0;
+        const chars = text.length;
+        liveWordCount.textContent = `${words} words · ${chars} characters`;
+      }
+
+      function updateBadgesAndStats() {
+        const entries = getEntries();
+        const counts = {
+          all: entries.length,
+          happy: 0,
+          promote: 0,
+          helping: 0,
+          discipline: 0,
+          reduce: 0,
+          schedule: 0,
+          daily: 0
+        };
+
+        let totalWords = 0;
+
+        entries.forEach(item => {
+          if (counts[item.section] !== undefined) {
+            counts[item.section]++;
+          }
+          const words = (item.content || '').trim().split(/\s+/).filter(Boolean).length;
+          totalWords += words;
+        });
+
+        // Update badge elements
+        for (const [sec, count] of Object.entries(counts)) {
+          const el = document.getElementById(`badge-${sec}`);
+          if (el) el.textContent = count;
+        }
+        const badgeAll = document.getElementById('badge-all');
+        if (badgeAll) badgeAll.textContent = counts.all;
+
+        // Update masthead statistics
+        mastheadStats.textContent = `TOTAL ENTRIES: ${counts.all} · WORDS: ${totalWords}`;
+      }
+
+      // ===============================================================
+      // 5. RENDER ENTRIES ARCHIVE
+      // ===============================================================
+      function renderEntries() {
+        const entries = getEntries();
+
+        // 1. Filter by section
+        let filtered = entries;
+        if (currentSection !== 'all') {
+          filtered = filtered.filter(item => item.section === currentSection);
+        }
+
+        // 2. Filter by search query
+        if (searchQuery) {
+          const q = searchQuery.toLowerCase();
+          filtered = filtered.filter(item => {
+            return (
+              (item.title && item.title.toLowerCase().includes(q)) ||
+              (item.content && item.content.toLowerCase().includes(q)) ||
+              (item.disciplineRule && item.disciplineRule.toLowerCase().includes(q)) ||
+              (item.reduceHabit && item.reduceHabit.toLowerCase().includes(q)) ||
+              (item.scheduleTime && item.scheduleTime.toLowerCase().includes(q))
+            );
+          });
+        }
+
+        // 3. Sort newest first
+        filtered.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+        entriesCountLabel.textContent = `Showing ${filtered.length} entries`;
+
+        // Empty state
+        if (filtered.length === 0) {
+          if (searchQuery) {
+            entriesList.innerHTML = `
+              <div class="empty-state">
+                <p>No entries found matching: <strong>"${escapeHtml(searchQuery)}"</strong></p>
+                <button type="button" class="retro-btn retro-btn-sm" onclick="document.getElementById('clear-search-btn').click()">Clear Search</button>
+              </div>
+            `;
+          } else {
+            entriesList.innerHTML = `
+              <div class="empty-state">
+                <p>This journal section is currently quiet and empty.</p>
+                <p>Pick up your pen and write your first entry in the desk above.</p>
+              </div>
+            `;
+          }
+          return;
+        }
+
+        // Build HTML for entries
+        entriesList.innerHTML = filtered.map(item => {
+          const formattedDate = formatDisplayDate(item.date);
+          const sectionLabel = (SECTIONS[item.section] ? SECTIONS[item.section].title.split(' ')[1] : item.section).toUpperCase();
+
+          // Extra details based on section
+          let extraHtml = '';
+
+          if (item.section === 'discipline') {
+            const verdictLabels = {
+              kept: 'KEPT [✓]',
+              broken: 'BROKEN [x]',
+              in_progress: 'IN PROGRESS [~]',
+              note: 'PLEDGE / RULE'
+            };
+            const isKept = item.disciplineStatus === 'kept';
+            extraHtml = `
+              <div class="entry-extra-data">
+                <span class="entry-status-badge ${isKept ? 'invert' : ''}">${verdictLabels[item.disciplineStatus] || item.disciplineStatus}</span>
+                ${item.disciplineRule ? ` <strong>Rule:</strong> ${escapeHtml(item.disciplineRule)}` : ''}
+              </div>
+            `;
+          } else if (item.section === 'reduce') {
+            const verdictLabels = {
+              avoided: 'AVOIDED [✓]',
+              improved: 'REDUCED [-]',
+              slipped: 'SLIPPED [!]'
+            };
+            const isAvoided = item.reduceVerdict === 'avoided';
+            extraHtml = `
+              <div class="entry-extra-data">
+                <span class="entry-status-badge ${isAvoided ? 'invert' : ''}">${verdictLabels[item.reduceVerdict] || item.reduceVerdict}</span>
+                ${item.reduceHabit ? ` <strong>Target Habit:</strong> ${escapeHtml(item.reduceHabit)}` : ''}
+              </div>
+            `;
+          } else if (item.section === 'schedule') {
+            const isCompleted = !!item.scheduleCompleted;
+            extraHtml = `
+              <div class="entry-extra-data schedule-item-row">
+                <input type="checkbox" class="schedule-check" data-id="${item.id}" ${isCompleted ? 'checked' : ''} title="Toggle task completed">
+                <span>
+                  <strong>Time:</strong> ${item.scheduleTime ? escapeHtml(item.scheduleTime) : 'Unscheduled'}
+                  · <strong>Status:</strong> ${isCompleted ? 'COMPLETED [✓]' : 'TO DO [ ]'}
+                </span>
+              </div>
+            `;
+          }
+
+          const completedClass = (item.section === 'schedule' && item.scheduleCompleted) ? 'schedule-completed' : '';
+
+          return `
+            <article class="entry-card" id="card-${item.id}">
+              <div class="entry-top">
+                <div>
+                  <span class="entry-date-badge">${formattedDate}</span>
+                  <span class="entry-section-tag">· [${escapeHtml(sectionLabel)}]</span>
+                </div>
+              </div>
+
+              ${item.title ? `<h3 class="entry-title ${completedClass}">${escapeHtml(item.title)}</h3>` : ''}
+
+              <div class="entry-body ${completedClass}">${escapeHtml(item.content)}</div>
+
+              ${extraHtml}
+
+              <div class="entry-actions">
+                <button type="button" class="retro-btn retro-btn-sm btn-edit-entry" data-id="${item.id}">Edit</button>
+                <button type="button" class="retro-btn retro-btn-sm btn-delete-entry" data-id="${item.id}">Delete</button>
+              </div>
+            </article>
+          `;
+        }).join('');
+
+        // Attach event handlers for dynamic items
+        attachEntryActions();
+      }
+
+      function attachEntryActions() {
+        // Edit button
+        entriesList.querySelectorAll('.btn-edit-entry').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const id = btn.dataset.id;
+            startEditEntry(id);
+          });
+        });
+
+        // Delete button
+        entriesList.querySelectorAll('.btn-delete-entry').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const id = btn.dataset.id;
+            deleteEntry(id);
+          });
+        });
+
+        // Schedule check toggle
+        entriesList.querySelectorAll('.schedule-check').forEach(cb => {
+          cb.addEventListener('change', (e) => {
+            const id = cb.dataset.id;
+            toggleScheduleComplete(id, cb.checked);
+          });
+        });
+      }
+
+      // ===============================================================
+      // 6. FORM ACTIONS (SAVE, EDIT, RESET)
+      // ===============================================================
+      function handleFormSubmit(e) {
+        e.preventDefault();
+
+        const dateVal = entryDateInput.value;
+        const sectionVal = entrySectionSelect.value;
+        const titleVal = entryTitleInput.value.trim();
+        const contentVal = entryContentInput.value.trim();
+
+        if (!contentVal) {
+          showToast('Please write some content before saving.');
+          entryContentInput.focus();
+          return;
+        }
+
+        const entries = getEntries();
+
+        if (editingEntryId) {
+          // UPDATE EXISTING ENTRY
+          const index = entries.findIndex(item => item.id === editingEntryId);
+          if (index !== -1) {
+            entries[index] = {
+              ...entries[index],
+              date: dateVal,
+              section: sectionVal,
+              title: titleVal,
+              content: contentVal,
+              disciplineStatus: disciplineStatus.value,
+              disciplineRule: disciplineRule.value.trim(),
+              reduceVerdict: reduceVerdict.value,
+              reduceHabit: reduceHabit.value.trim(),
+              scheduleTime: scheduleTime.value.trim(),
+              scheduleCompleted: (scheduleStatus.value === 'completed'),
+              updatedAt: Date.now()
+            };
+            saveEntries(entries);
+            showToast('Entry successfully updated');
+          }
+          cancelEdit();
+        } else {
+          // CREATE NEW ENTRY
+          const newEntry = {
+            id: 'entry_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
+            date: dateVal,
+            section: sectionVal,
+            title: titleVal,
+            content: contentVal,
+            disciplineStatus: disciplineStatus.value,
+            disciplineRule: disciplineRule.value.trim(),
+            reduceVerdict: reduceVerdict.value,
+            reduceHabit: reduceHabit.value.trim(),
+            scheduleTime: scheduleTime.value.trim(),
+            scheduleCompleted: (scheduleStatus.value === 'completed'),
+            createdAt: Date.now()
+          };
+
+          entries.unshift(newEntry);
+          saveEntries(entries);
+          showToast('New entry recorded in ledger');
+          resetForm(false);
+        }
+
+        renderEntries();
+      }
+
+      function startEditEntry(id) {
+        const entries = getEntries();
+        const item = entries.find(e => e.id === id);
+        if (!item) return;
+
+        editingEntryId = id;
+        entryIdInput.value = item.id;
+        entryDateInput.value = item.date;
+        entrySectionSelect.value = item.section;
+        entryTitleInput.value = item.title || '';
+        entryContentInput.value = item.content || '';
+
+        // Fill section fields
+        if (item.disciplineStatus) disciplineStatus.value = item.disciplineStatus;
+        if (item.disciplineRule) disciplineRule.value = item.disciplineRule;
+        if (item.reduceVerdict) reduceVerdict.value = item.reduceVerdict;
+        if (item.reduceHabit) reduceHabit.value = item.reduceHabit;
+        if (item.scheduleTime) scheduleTime.value = item.scheduleTime;
+        if (item.scheduleCompleted !== undefined) {
+          scheduleStatus.value = item.scheduleCompleted ? 'completed' : 'pending';
+        }
+
+        updateFormFieldsVisibility(item.section);
+        updateWordCount();
+
+        // UI mode toggle
+        editModeBanner.classList.add('visible');
+        btnSaveEntry.textContent = 'Update Entry';
+        deskFormTitle.textContent = `EDITING ENTRY · ${formatDisplayDate(item.date)}`;
+
+        // Scroll to writing desk smoothly
+        document.getElementById('writing-desk').scrollIntoView({ behavior: 'smooth' });
+        entryContentInput.focus();
+      }
+
+      function cancelEdit() {
+        editingEntryId = null;
+        editModeBanner.classList.remove('visible');
+        btnSaveEntry.textContent = 'Save Entry';
+        resetForm(true);
+      }
+
+      function resetForm(preserveSection = false) {
+        editingEntryId = null;
+        entryIdInput.value = '';
+        entryDateInput.value = getCurrentDateTimeLocal();
+        entryTitleInput.value = '';
+        entryContentInput.value = '';
+        disciplineRule.value = '';
+        reduceHabit.value = '';
+        scheduleTime.value = '';
+        scheduleStatus.value = 'pending';
+        editModeBanner.classList.remove('visible');
+        btnSaveEntry.textContent = 'Save Entry';
+
+        if (!preserveSection) {
+          const defSec = SECTIONS[currentSection] ? SECTIONS[currentSection].defaultFormSection : 'daily';
+          entrySectionSelect.value = defSec;
+          updateFormFieldsVisibility(defSec);
+        } else {
+          updateFormFieldsVisibility(entrySectionSelect.value);
+        }
+
+        updateWordCount();
+      }
+
+      function deleteEntry(id) {
+        const entries = getEntries();
+        const item = entries.find(e => e.id === id);
+        const confirmMsg = item && item.title 
+          ? `Delete entry "${item.title}"? This cannot be undone.`
+          : 'Delete this entry from your ledger?';
+
+        if (window.confirm(confirmMsg)) {
+          const updated = entries.filter(e => e.id !== id);
+          saveEntries(updated);
+          if (editingEntryId === id) {
+            cancelEdit();
+          }
+          showToast('Entry deleted');
+          renderEntries();
+        }
+      }
+
+      function toggleScheduleComplete(id, isChecked) {
+        const entries = getEntries();
+        const index = entries.findIndex(e => e.id === id);
+        if (index !== -1) {
+          entries[index].scheduleCompleted = isChecked;
+          saveEntries(entries);
+          renderEntries();
+          showToast(isChecked ? 'Task marked complete' : 'Task marked to do');
+        }
+      }
+
+      // ===============================================================
+      // 7. EXPORT, BACKUP & IMPORT
+      // ===============================================================
+      function exportAsTextFile() {
+        const entries = getEntries();
+        if (entries.length === 0) {
+          showToast('No entries to export');
+          return;
+        }
+
+        // Sort chronological
+        const sorted = [...entries].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+        let out = '';
+        out += '========================================================================\n';
+        out += '                    THE PERSONAL CHRONICLE & LEDGER                     \n';
+        out += `          Exported on: ${new Date().toLocaleString()}                  \n`;
+        out += `          Total Entries: ${sorted.length}                              \n`;
+        out += '========================================================================\n\n';
+
+        sorted.forEach((item, idx) => {
+          const secName = (SECTIONS[item.section] ? SECTIONS[item.section].title : item.section).toUpperCase();
+          out += `------------------------------------------------------------------------\n`;
+          out += `ENTRY #${idx + 1} | ${secName}\n`;
+          out += `DATE: ${formatDisplayDate(item.date)}\n`;
+          if (item.title) out += `TITLE: ${item.title}\n`;
+          if (item.section === 'discipline') {
+            out += `STATUS: ${item.disciplineStatus} | RULE: ${item.disciplineRule || 'N/A'}\n`;
+          }
+          if (item.section === 'reduce') {
+            out += `RESULT: ${item.reduceVerdict} | HABIT: ${item.reduceHabit || 'N/A'}\n`;
+          }
+          if (item.section === 'schedule') {
+            out += `TIME: ${item.scheduleTime || 'N/A'} | COMPLETED: ${item.scheduleCompleted ? 'YES' : 'NO'}\n`;
+          }
+          out += `\n${item.content}\n\n`;
+        });
+
+        downloadFile(out, `personal_journal_ledger_${new Date().toISOString().slice(0, 10)}.txt`, 'text/plain');
+        showToast('Text ledger exported');
+      }
+
+      function backupAsJson() {
+        const entries = getEntries();
+        const jsonStr = JSON.stringify(entries, null, 2);
+        downloadFile(jsonStr, `journal_backup_${new Date().toISOString().slice(0, 10)}.json`, 'application/json');
+        showToast('JSON backup downloaded');
+      }
+
+      function handleImportFile(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function (evt) {
+          try {
+            const imported = JSON.parse(evt.target.result);
+            if (!Array.isArray(imported)) {
+              alert('Invalid backup file: Expected a JSON array of entries.');
+              return;
+            }
+
+            const current = getEntries();
+            const existingIds = new Set(current.map(i => i.id));
+            let addedCount = 0;
+
+            imported.forEach(item => {
+              if (item && item.id && !existingIds.has(item.id)) {
+                current.push(item);
+                existingIds.add(item.id);
+                addedCount++;
+              } else if (item && !item.id) {
+                item.id = 'entry_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
+                current.push(item);
+                addedCount++;
+              }
+            });
+
+            saveEntries(current);
+            renderEntries();
+            showToast(`Imported ${addedCount} new entries`);
+          } catch (err) {
+            console.error('Import error:', err);
+            alert('Failed to parse JSON file.');
+          }
+          importFileInput.value = '';
+        };
+        reader.readAsText(file);
+      }
+
+      function downloadFile(content, fileName, contentType) {
+        const blob = new Blob([content], { type: contentType });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+
+      // ===============================================================
+      // 8. SAMPLE SEED DATA & CLEAR ALL
+      // Gives the user initial inspirational entries
+      // ===============================================================
+      function loadSampleData() {
+        if (getEntries().length > 0) {
+          if (!window.confirm('Load sample entries? They will be added to your current journal.')) {
+            return;
+          }
+        }
+
+        const now = new Date();
+        const d = (hoursAgo) => {
+          const date = new Date(now.getTime() - hoursAgo * 3600 * 1000);
+          return date.toISOString().slice(0, 16);
+        };
+
+        const samples = [
+          {
+            id: 'sample_1',
+            date: d(2),
+            section: 'daily',
+            title: 'Reflections on an Autumn Morning',
+            content: 'The morning began in utter quiet. The tea was piping hot, and outside the window the leaves were beginning to turn. Spent an uninterrupted hour writing and sketching out plans for the coming winter. There is real power in deliberate slowness.',
+            createdAt: Date.now() - 7200000
+          },
+          {
+            id: 'sample_2',
+            date: d(5),
+            section: 'happy',
+            title: 'A surprise letter and warm soup',
+            content: 'Received an unexpected handwritten postcard from an old friend who moved abroad three years ago. Cooked a hearty vegetable soup for lunch. These simple, grounding things are what make an ordinary Thursday deeply satisfying.',
+            createdAt: Date.now() - 18000000
+          },
+          {
+            id: 'sample_3',
+            date: d(8),
+            section: 'promote',
+            title: 'Finished Chapter 4 of Systems Architecture',
+            content: 'Completed the technical analysis and summarized the trade-offs of offline-first storage. Next step: prototype the sync conflict resolution strategy tomorrow afternoon.',
+            createdAt: Date.now() - 28800000
+          },
+          {
+            id: 'sample_4',
+            date: d(12),
+            section: 'helping',
+            title: 'Assisted neighbor with garden clearing',
+            content: 'Helped Mrs. Vance move the heavy fallen oak branches after the thunderstorm. She shared warm freshly baked ginger biscuits. True community lives in small reciprocal acts.',
+            createdAt: Date.now() - 43200000
+          },
+          {
+            id: 'sample_5',
+            date: d(16),
+            section: 'discipline',
+            title: 'Digital curfew at 21:30',
+            disciplineStatus: 'kept',
+            disciplineRule: 'No screens or phone notifications after 21:30',
+            content: 'Turned off the computer at 21:15, read thirty pages of a biography by lamplight, and fell asleep with zero anxiety. Kept the rule strictly for the fourth consecutive day.',
+            createdAt: Date.now() - 57600000
+          },
+          {
+            id: 'sample_6',
+            date: d(20),
+            section: 'reduce',
+            title: 'Cut afternoon caffeine',
+            reduceVerdict: 'avoided',
+            reduceHabit: 'Third cup of espresso after 14:00',
+            content: 'Craved an espresso around 15:30 when fatigue hit. Replaced it with cold spring water and a 10-minute brisk walk. Mind cleared immediately without sleep disruption.',
+            createdAt: Date.now() - 72000000
+          },
+          {
+            id: 'sample_7',
+            date: d(1),
+            section: 'schedule',
+            title: 'Weekly project review & code freeze',
+            scheduleTime: '10:00 - 11:30',
+            scheduleCompleted: true,
+            content: 'Audit current ledger implementations, verify responsiveness, run tests.',
+            createdAt: Date.now() - 3600000
+          },
+          {
+            id: 'sample_8',
+            date: d(0),
+            section: 'schedule',
+            title: 'Evening walk & silent reflection',
+            scheduleTime: '18:00 - 18:45',
+            scheduleCompleted: false,
+            content: 'Walk along the river path with notebook and fountain pen.',
+            createdAt: Date.now()
+          }
+        ];
+
+        saveEntries(samples);
+        renderEntries();
+        showToast('Sample journal entries loaded');
+      }
+
+      function clearAllData() {
+        if (window.confirm('WARNING: Are you sure you want to clear ALL journal entries? This will delete everything stored in this browser.')) {
+          if (window.confirm('Second confirmation: Have you downloaded a .txt or .json backup? Click OK to erase all records.')) {
+            localStorage.removeItem(STORAGE_KEY);
+            cancelEdit();
+            renderEntries();
+            updateBadgesAndStats();
+            showToast('All data erased from browser');
+          }
+        }
+      }
+
+      function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      // ===============================================================
+      // 9. EVENT LISTENERS SETUP
+      // ===============================================================
+      function init() {
+        // Pre-fill date picker with current local time
+        entryDateInput.value = getCurrentDateTimeLocal();
+
+        // Initialize Theme Mode
+        applyTheme(getPreferredTheme());
+        if (themeToggleBtn) {
+          themeToggleBtn.addEventListener('click', toggleTheme);
+        }
+
+        // Listen for OS theme changes if user has not set explicit preference
+        if (window.matchMedia) {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            try {
+              if (!localStorage.getItem(THEME_STORAGE_KEY)) {
+                applyTheme(e.matches ? 'dark' : 'light');
+              }
+            } catch (err) {}
+          });
+        }
+
+        // Nav tabs click
+        navTabs.addEventListener('click', (e) => {
+          const btn = e.target.closest('.tab-btn');
+          if (btn && btn.dataset.section) {
+            setSection(btn.dataset.section);
+          }
+        });
+
+        // Form submit
+        entryForm.addEventListener('submit', handleFormSubmit);
+
+        // Section dropdown change in writing desk
+        entrySectionSelect.addEventListener('change', () => {
+          updateFormFieldsVisibility(entrySectionSelect.value);
+        });
+
+        // Word count on typing
+        entryContentInput.addEventListener('input', updateWordCount);
+
+        // Cancel edit & reset
+        btnCancelEdit.addEventListener('click', cancelEdit);
+        btnResetForm.addEventListener('click', () => resetForm(false));
+
+        // Live search
+        searchInput.addEventListener('input', (e) => {
+          searchQuery = e.target.value.trim();
+          clearSearchBtn.style.display = searchQuery ? 'inline-block' : 'none';
+          renderEntries();
+        });
+
+        clearSearchBtn.addEventListener('click', () => {
+          searchInput.value = '';
+          searchQuery = '';
+          clearSearchBtn.style.display = 'none';
+          renderEntries();
+          searchInput.focus();
+        });
+
+        // Utility export/backup/import
+        btnExportTxt.addEventListener('click', exportAsTextFile);
+        btnBackupJson.addEventListener('click', backupAsJson);
+        btnImportJson.addEventListener('click', () => importFileInput.click());
+        importFileInput.addEventListener('change', handleImportFile);
+
+        // Footer buttons
+        btnSampleData.addEventListener('click', loadSampleData);
+        btnClearAll.addEventListener('click', clearAllData);
+
+        // Keyboard shortcut: Ctrl+S / Cmd+S inside textarea saves entry
+        entryContentInput.addEventListener('keydown', (e) => {
+          if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+            e.preventDefault();
+            btnSaveEntry.click();
+          }
+        });
+
+        // Seed initial sample data if completely first time visitor
+        const existing = getEntries();
+        if (existing.length === 0) {
+          loadSampleData();
+        } else {
+          updateBadgesAndStats();
+          renderEntries();
+        }
+
+        // Set default initial view
+        setSection('all');
+      }
+
+      // Start application on DOM ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+
+    })();
+  </script>
+</body>
+</html>

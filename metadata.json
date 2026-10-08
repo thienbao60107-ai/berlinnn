@@ -1,0 +1,6 @@
+{
+  "name": "Chronicle - Personal Journal",
+  "description": "A quiet, retro black-and-white personal diary and life organizer with six dedicated journals, daily entries, discipline tracking, and schedule planner.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
